@@ -40,6 +40,19 @@ public enum PhoneNumberError: Error {
 
 extension PhoneNumberError: LocalizedError {
 
+    #if os(Linux)
+    public var errorDescription: String? {
+        switch self {
+        case .generalError: return "An error occured whilst validating the phone number."
+        case .invalidCountryCode: return "The country code is invalid."
+        case .notANumber: return "The number provided is invalid."
+        case .unknownType: return "Phone number type is unknown."
+        case .tooLong: return "The number provided is too long."
+        case .tooShort: return "The number provided is too short."
+        case .deprecated: return "This function is deprecated."
+        }
+    }
+    #else
     public var errorDescription: String? {
         switch self {
         case .generalError: return NSLocalizedString("An error occured whilst validating the phone number.", comment: "")
@@ -51,7 +64,7 @@ extension PhoneNumberError: LocalizedError {
         case .deprecated: return NSLocalizedString("This function is deprecated.", comment: "")
         }
     }
-
+    #endif
 }
 
 public enum PhoneNumberFormat {
