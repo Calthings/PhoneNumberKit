@@ -43,7 +43,6 @@ extension PhoneNumber : Hashable {
     public var hashValue: Int {
         return countryCode.hashValue ^ nationalNumber.hashValue ^ leadingZero.hashValue ^ (numberExtension?.hashValue ?? 0)
     }
-
 }
 
 extension PhoneNumber{
