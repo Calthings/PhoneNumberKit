@@ -19,7 +19,6 @@ final class Formatter {
     init(regexManager: RegexManager) {
         self.regexManager = regexManager
     }
-
     
     // MARK: Formatting functions
     
@@ -109,7 +108,6 @@ final class Formatter {
             return nationalNumber
         }
     }
-    
 }
 
 public extension PhoneNumber {

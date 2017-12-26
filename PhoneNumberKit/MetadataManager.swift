@@ -56,12 +56,12 @@ final class MetadataManager {
             }
             
             if let jsonData = jsonData,
-                let jsonObjects = try JSONSerialization.jsonObject(with: jsonData, options: JSONSerialization.ReadingOptions.allowFragments) as? NSDictionary,
-                let metadataDict = jsonObjects["phoneNumberMetadata"] as? NSDictionary,
-                let metadataTerritories = metadataDict["territories"] as? NSDictionary ,
+                let jsonObjects = try JSONSerialization.jsonObject(with: jsonData, options: JSONSerialization.ReadingOptions.allowFragments) as? [String: Any],
+                let metadataDict = jsonObjects["phoneNumberMetadata"] as? [String: Any],
+                let metadataTerritories = metadataDict["territories"] as? [String: Any] ,
                 let metadataTerritoryArray = metadataTerritories["territory"] as? NSArray {
                     metadataTerritoryArray.forEach({
-                        if let territoryDict = $0 as? NSDictionary {
+                        if let territoryDict = $0 as? [String: Any] {
                             let parsedTerritory = MetadataTerritory(jsondDict: territoryDict)
                             territoryArray.append(parsedTerritory)
                         }

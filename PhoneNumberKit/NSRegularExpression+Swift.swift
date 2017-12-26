@@ -16,7 +16,7 @@ extension String {
         return NSMakeRange(utf16view.distance(from: utf16view.startIndex, to: from),
 		                   utf16view.distance(from: from, to: to))
 	}
-	
+
 	func range(from nsRange: NSRange) -> Range<String.Index>? {
 		guard
 			let from16 = utf16.index(utf16.startIndex, offsetBy: nsRange.location, limitedBy: utf16.endIndex),
@@ -27,7 +27,6 @@ extension String {
 		return from ..< to
 	}
 }
-
 
 extension NSRegularExpression {
 	func enumerateMatches(in string: String, options: NSRegularExpression.MatchingOptions = [], range: Range<String.Index>? = nil, using block: (NSTextCheckingResult?, NSRegularExpression.MatchingFlags, UnsafeMutablePointer<ObjCBool>) -> Swift.Void) {

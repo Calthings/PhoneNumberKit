@@ -136,7 +136,6 @@ final class ParseManager {
         return multiParseArray
     }
 
-
     /// Get correct ISO 639 compliant region code for a number.
     ///
     /// - Parameters:

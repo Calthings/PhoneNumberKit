@@ -56,7 +56,6 @@ struct MetadataTerritory {
     let uan: MetadataPhoneNumberDesc?
     let numberFormats: [MetadataPhoneNumberFormat]
     let leadingDigits: String?
-
 }
 
 extension MetadataTerritory {
@@ -64,25 +63,25 @@ extension MetadataTerritory {
     Parse a json dictionary into a MetadataTerritory.
     - Parameter jsondDict: json dictionary from attached json metadata file.
     */
-    init(jsondDict: NSDictionary) {
-        self.generalDesc = MetadataPhoneNumberDesc(jsondDict: (jsondDict.value(forKey: "generalDesc") as? NSDictionary))
-        self.fixedLine = MetadataPhoneNumberDesc(jsondDict: (jsondDict.value(forKey: "fixedLine") as? NSDictionary))
-        self.mobile = MetadataPhoneNumberDesc(jsondDict: (jsondDict.value(forKey: "mobile") as? NSDictionary))
-        self.tollFree = MetadataPhoneNumberDesc(jsondDict: (jsondDict.value(forKey: "tollFree") as? NSDictionary))
-        self.premiumRate = MetadataPhoneNumberDesc(jsondDict: (jsondDict.value(forKey: "premiumRate") as? NSDictionary))
-        self.sharedCost = MetadataPhoneNumberDesc(jsondDict: (jsondDict.value(forKey: "sharedCost") as? NSDictionary))
-        self.personalNumber = MetadataPhoneNumberDesc(jsondDict: (jsondDict.value(forKey: "personalNumber") as? NSDictionary))
-        self.voip = MetadataPhoneNumberDesc(jsondDict: (jsondDict.value(forKey: "voip") as? NSDictionary))
-        self.pager = MetadataPhoneNumberDesc(jsondDict: (jsondDict.value(forKey: "pager") as? NSDictionary))
-        self.uan = MetadataPhoneNumberDesc(jsondDict: (jsondDict.value(forKey: "uan") as? NSDictionary))
-        self.emergency = MetadataPhoneNumberDesc(jsondDict: (jsondDict.value(forKey: "emergency") as? NSDictionary))
-        self.voicemail = MetadataPhoneNumberDesc(jsondDict: (jsondDict.value(forKey: "voicemail") as? NSDictionary))
-        self.codeID = jsondDict.value(forKey: "id") as! String
-        self.countryCode = UInt64(jsondDict.value(forKey: "countryCode") as! String)!
-        self.internationalPrefix = jsondDict.value(forKey: "internationalPrefix") as? String
-        self.nationalPrefixTransformRule = jsondDict.value(forKey: "nationalPrefixTransformRule") as? String
-        let possibleNationalPrefixForParsing = jsondDict.value(forKey: "nationalPrefixForParsing") as? String
-        let possibleNationalPrefix = jsondDict.value(forKey: "nationalPrefix") as? String
+    init(jsondDict: [String: Any]) {
+        self.generalDesc = MetadataPhoneNumberDesc(jsondDict: jsondDict["generalDesc"] as? [String: Any])
+        self.fixedLine = MetadataPhoneNumberDesc(jsondDict: (jsondDict["fixedLine"] as? [String: Any]))
+        self.mobile = MetadataPhoneNumberDesc(jsondDict: (jsondDict["mobile"] as? [String: Any]))
+        self.tollFree = MetadataPhoneNumberDesc(jsondDict: (jsondDict["tollFree"] as? [String: Any]))
+        self.premiumRate = MetadataPhoneNumberDesc(jsondDict: (jsondDict["premiumRate"] as? [String: Any]))
+        self.sharedCost = MetadataPhoneNumberDesc(jsondDict: (jsondDict["sharedCost"] as? [String: Any]))
+        self.personalNumber = MetadataPhoneNumberDesc(jsondDict: (jsondDict["personalNumber"] as? [String: Any]))
+        self.voip = MetadataPhoneNumberDesc(jsondDict: (jsondDict["voip"] as? [String: Any]))
+        self.pager = MetadataPhoneNumberDesc(jsondDict: (jsondDict["pager"] as? [String: Any]))
+        self.uan = MetadataPhoneNumberDesc(jsondDict: (jsondDict["uan"] as? [String: Any]))
+        self.emergency = MetadataPhoneNumberDesc(jsondDict: (jsondDict["emergency"] as? [String: Any]))
+        self.voicemail = MetadataPhoneNumberDesc(jsondDict: (jsondDict["voicemail"] as? [String: Any]))
+        self.codeID = jsondDict["id"] as! String
+        self.countryCode = UInt64(jsondDict["countryCode"] as! String)!
+        self.internationalPrefix = jsondDict["internationalPrefix"] as? String
+        self.nationalPrefixTransformRule = jsondDict["nationalPrefixTransformRule"] as? String
+        let possibleNationalPrefixForParsing = jsondDict["nationalPrefixForParsing"] as? String
+        let possibleNationalPrefix = jsondDict["nationalPrefix"] as? String
         self.nationalPrefix = possibleNationalPrefix
         if (possibleNationalPrefixForParsing == nil && possibleNationalPrefix != nil) {
             self.nationalPrefixForParsing = self.nationalPrefix
@@ -90,35 +89,34 @@ extension MetadataTerritory {
         else {
             self.nationalPrefixForParsing = possibleNationalPrefixForParsing
         }
-        self.preferredExtnPrefix = jsondDict.value(forKey: "preferredExtnPrefix") as? String
-        self.nationalPrefixFormattingRule = jsondDict.value(forKey: "nationalPrefixFormattingRule") as? String
-        if let mainCountryForCode = jsondDict.value(forKey: "mainCountryForCode") as? NSString {
+        self.preferredExtnPrefix = jsondDict["preferredExtnPrefix"] as? String
+        self.nationalPrefixFormattingRule = jsondDict["nationalPrefixFormattingRule"] as? String
+        if let mainCountryForCode = jsondDict["mainCountryForCode"] as? NSString {
             self.mainCountryForCode = mainCountryForCode.boolValue
         } else {
             self.mainCountryForCode = false
         }
         var numberFormats = [MetadataPhoneNumberFormat]()
         
-        if let availableFormats = (jsondDict.value(forKey: "availableFormats") as? NSDictionary)?.value(forKey: "numberFormat") {
+        if let availableFormats = (jsondDict["availableFormats"] as? [String: Any])?["numberFormat"] {
             if let formatsArray = availableFormats as? NSArray {
                 for format in formatsArray {
-                    var processedFormat = MetadataPhoneNumberFormat(jsondDict: format as? NSDictionary)
+                    var processedFormat = MetadataPhoneNumberFormat(jsondDict: format as? [String: Any])
                     if processedFormat.nationalPrefixFormattingRule == nil {
                         processedFormat.nationalPrefixFormattingRule = self.nationalPrefixFormattingRule
                     }
                     numberFormats.append(processedFormat)
                 }
             }
-            if let format = availableFormats as? NSDictionary {
+            if let format = availableFormats as? [String: Any] {
                 let processedFormat = MetadataPhoneNumberFormat(jsondDict: format)
                 numberFormats.append(processedFormat)
             }
         }
         self.numberFormats = numberFormats
-        self.leadingDigits = jsondDict.value(forKey: "leadingDigits") as? String
+        self.leadingDigits = jsondDict["leadingDigits"] as? String
     }
 }
-
 
 /**
 MetadataPhoneNumberDesc object
@@ -137,11 +135,10 @@ extension MetadataPhoneNumberDesc {
     Parse a json dictionary into a MetadataPhoneNumberDesc.
     - Parameter jsondDict: json dictionary from attached json metadata file.
     */
-    init(jsondDict: NSDictionary?) {
-        self.nationalNumberPattern = jsondDict?.value(forKey: "nationalNumberPattern") as? String
-        self.possibleNumberPattern = jsondDict?.value(forKey: "possibleNumberPattern") as? String
-        self.exampleNumber = jsondDict?.value(forKey: "exampleNumber") as? String
-        
+    init(jsondDict: [String: Any]?) {
+        self.nationalNumberPattern = jsondDict?["nationalNumberPattern"] as? String
+        self.possibleNumberPattern = jsondDict?["possibleNumberPattern"] as? String
+        self.exampleNumber = jsondDict?["exampleNumber"] as? String
     }
 }
 
@@ -171,28 +168,29 @@ extension MetadataPhoneNumberFormat {
      Parse a json dictionary into a MetadataPhoneNumberFormat.
      - Parameter jsondDict: json dictionary from attached json metadata file.
      */
-    init(jsondDict: NSDictionary?) {
-        self.pattern = jsondDict?.value(forKey: "pattern") as? String
-        self.format = jsondDict?.value(forKey: "format") as? String
-        self.intlFormat = jsondDict?.value(forKey: "intlFormat") as? String
+    init(jsondDict: [String: Any]?) {
+        self.pattern = jsondDict?["pattern"] as? String
+        self.format = jsondDict?["format"] as? String
+        self.intlFormat = jsondDict?["intlFormat"] as? String
         var leadingDigits = [String]()
-        if let leadingDigitsPatterns = jsondDict?.value(forKey: "leadingDigits") {
+        if let leadingDigitsPatterns = jsondDict?["leadingDigits"] {
             if let leadingDigitArray = leadingDigitsPatterns as? [String] {
                 for leadingDigit in leadingDigitArray {
                     leadingDigits.append(leadingDigit)
                 }
             }
+
             if let leadingDigit = leadingDigitsPatterns as? String {
                 leadingDigits.append(leadingDigit)
             }
         }
         self.leadingDigitsPatterns = leadingDigits
-        self.nationalPrefixFormattingRule = jsondDict?.value(forKey: "nationalPrefixFormattingRule") as? String
-        if let _nationalPrefixOptionalWhenFormatting = jsondDict?.value(forKey: "nationalPrefixOptionalWhenFormatting") as? NSString {
+        self.nationalPrefixFormattingRule = jsondDict?["nationalPrefixFormattingRule"] as? String
+        if let _nationalPrefixOptionalWhenFormatting = jsondDict?["nationalPrefixOptionalWhenFormatting"] as? NSString {
             self.nationalPrefixOptionalWhenFormatting = _nationalPrefixOptionalWhenFormatting.boolValue
         } else {
             self.nationalPrefixOptionalWhenFormatting = false
         }
-        self.domesticCarrierCodeFormattingRule = jsondDict?.value(forKey: "carrierCodeFormattingRule") as? String
+        self.domesticCarrierCodeFormattingRule = jsondDict?["carrierCodeFormattingRule"] as? String
     }
 }

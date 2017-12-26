@@ -31,7 +31,6 @@ public final class PartialFormatter {
         self.withPrefix = withPrefix
     }
 
-    
     public var defaultRegion: String {
         didSet {
             updateMetadataForDefaultRegion()
@@ -283,8 +282,7 @@ public final class PartialFormatter {
         }
         return nil
     }
-    
-    
+
     func applyFormat(_ rawNumber: String, formats: [MetadataPhoneNumberFormat]) -> String? {
         guard let regexManager = regexManager else { return nil }
         for format in formats {
@@ -311,9 +309,7 @@ public final class PartialFormatter {
         }
         return nil
     }
-    
-    
-    
+
     func createFormattingTemplate(_ format: MetadataPhoneNumberFormat, rawNumber: String) -> String?  {
         guard var numberPattern = format.pattern, let numberFormat = format.format, let regexManager = regexManager else {
             return nil
