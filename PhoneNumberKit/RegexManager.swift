@@ -221,19 +221,15 @@ final class RegexManager {
             return false
         }
     }
-    
 }
-
-
 
 // MARK: Extensions
-
 extension String {
     func substring(with range: NSRange) -> String {
-        let nsString = self as NSString
-        return nsString.substring(with: range)
+        let start = self.index(self.startIndex, offsetBy: range.lowerBound)
+        let end = self.index(self.startIndex, offsetBy: range.upperBound)
+        let range = start..<end
+
+        return String(self[range])
     }
 }
-
-
-
