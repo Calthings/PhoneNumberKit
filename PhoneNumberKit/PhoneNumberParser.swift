@@ -85,15 +85,14 @@ final class PhoneNumberParser {
     - Returns: Country code is UInt64. Optional.
     */
     func extractPotentialCountryCode(_ fullNumber: String, nationalNumber: inout String) -> UInt64? {
-        let nsFullNumber = fullNumber as NSString
-        if nsFullNumber.length == 0 || nsFullNumber.substring(to: 1) == "0" {
+        if fullNumber.count == 0 || fullNumber.prefix(1) == "0" {
             return 0
         }
-        let numberLength = nsFullNumber.length
+        let numberLength = fullNumber.count
         let maxCountryCode = PhoneNumberConstants.maxLengthCountryCode
         var startPosition = 0
         if fullNumber.hasPrefix("+") {
-            if nsFullNumber.length == 1 {
+            if fullNumber.count == 1 {
                 return 0
             }
             startPosition = 1
@@ -103,16 +102,20 @@ final class PhoneNumberParser {
                 break
             }
             let stringRange = NSMakeRange(startPosition, i)
-            let subNumber = nsFullNumber.substring(with: stringRange)
+            let subNumber = fullNumber.substring(with: stringRange)
             if let potentialCountryCode = UInt64(subNumber)
                 , metadata.territoriesByCode[potentialCountryCode] != nil {
-                    nationalNumber = nsFullNumber.substring(from: i)
+                let start = fullNumber.index(fullNumber.startIndex, offsetBy: i)
+                let end = fullNumber.index(fullNumber.endIndex, offsetBy: 0)
+                let range = start..<end
+                
+                nationalNumber = String(fullNumber[range])
                     return potentialCountryCode
             }
         }
         return 0
     }
-    
+
     // MARK: Validations
     
     func checkNumberType(_ nationalNumber: String, metadata: MetadataTerritory, leadingZero: Bool = false) -> PhoneNumberType {
