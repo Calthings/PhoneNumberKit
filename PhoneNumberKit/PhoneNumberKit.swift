@@ -168,14 +168,16 @@ public final class PhoneNumberKit: NSObject {
         }
 #endif
         let currentLocale = Locale.current
+#if os(Linux)
+#else
         if #available(iOS 10.0, *), let countryCode = currentLocale.regionCode {
             return countryCode.uppercased()
         } else {
-			if let countryCode = (currentLocale as NSLocale).object(forKey: .countryCode) as? String {
+            if let countryCode = (currentLocale as NSLocale).object(forKey: .countryCode) as? String {
                 return countryCode.uppercased()
             }
         }
+#endif
         return PhoneNumberConstants.defaultCountry
     }
-
 }
