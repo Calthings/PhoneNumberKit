@@ -27,7 +27,7 @@ public final class PhoneNumberKit: NSObject {
    }
 
     public init(JSONDataCallback: @escaping JSONDataCallback) {
-        self.metadataManager = MetadataManager(JSONDataCallback: JSONDataCallback)
+       self.metadataManager = MetadataManager(JSONDataCallback: JSONDataCallback)
        self.parseManager = ParseManager(metadataManager: metadataManager, regexManager: regexManager)
        super.init()
    }

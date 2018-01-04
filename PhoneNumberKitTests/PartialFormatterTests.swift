@@ -16,7 +16,6 @@ class PartialFormatterTests: XCTestCase {
     
     let phoneNumberKit = PhoneNumberKit()
 
-    
     // +33689555555
     func testFrenchNumberFromFrenchRegion()  {
         let partialFormatter = PartialFormatter(phoneNumberKit: phoneNumberKit, defaultRegion: "FR")

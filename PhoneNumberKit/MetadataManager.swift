@@ -9,7 +9,6 @@
 import Foundation
 
 final class MetadataManager {
-
     var territories = [MetadataTerritory]()
     var territoriesByCode = [UInt64: [MetadataTerritory]]()
     var mainTerritoryByCode = [UInt64: MetadataTerritory]()
@@ -39,22 +38,25 @@ final class MetadataManager {
         territoriesByCountry.removeAll()
     }
 
-
     /// Populates the metadata from the included json file resource.
     ///
     /// - returns: array of MetadataTerritory objects
     fileprivate func populateTerritories(getJSONData: JSONDataCallback? = nil) -> [MetadataTerritory] {
         var territoryArray = [MetadataTerritory]()
-        let frameworkBundle = Bundle(for: PhoneNumberKit.self)
+
         do {
             var jsonData: Data?
             if let getJSONData = getJSONData, let data = getJSONData() {
                 jsonData = data
-            } else  if let jsonPath = frameworkBundle.path(forResource: "PhoneNumberMetadata", ofType: "json"),
+            } else {
+                let frameworkBundle = Bundle(for: PhoneNumberKit.self)
+
+                if let jsonPath = frameworkBundle.path(forResource: "PhoneNumberMetadata", ofType: "json"),
                 let data = try? Data(contentsOf: URL(fileURLWithPath: jsonPath)) {
-                jsonData = data
+                    jsonData = data
+                }
             }
-            
+
             if let jsonData = jsonData,
                 let jsonObjects = try JSONSerialization.jsonObject(with: jsonData, options: JSONSerialization.ReadingOptions.allowFragments) as? [String: Any],
                 let metadataDict = jsonObjects["phoneNumberMetadata"] as? [String: Any],
