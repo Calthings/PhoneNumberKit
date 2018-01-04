@@ -300,7 +300,7 @@ public final class PartialFormatter {
 #if os(Linux)
     private func formatString(_ pattern: String, arg1: String) -> String {
         return arg1.withCString {
-            return String(format: pattern, String(cString: $0))
+            return String(format: pattern, $0)
         }
     }
 #else
