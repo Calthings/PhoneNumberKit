@@ -188,13 +188,20 @@ public final class PartialFormatter {
         var processedNumber = rawNumber
         do {
             if let internationalPrefix = currentMetadata?.internationalPrefix {
-                let prefixPattern = String(format: PhoneNumberPatterns.iddPattern, arguments: [internationalPrefix])
-                let matches = try regexManager?.matchedStringByRegex(prefixPattern, string: rawNumber)
-                if let m = matches?.first {
-                    let startCallingCode = m.count
-                    let index = rawNumber.index(rawNumber.startIndex, offsetBy: startCallingCode)
-                    processedNumber = String(rawNumber[index...])
-                    prefixBeforeNationalNumber = String(rawNumber[..<index])
+                try internationalPrefix.withCString {
+#if os(Linux)
+                    let ip = $0
+#else
+                    let ip = String(cString: $0)
+#endif
+                    let prefixPattern = String(format: PhoneNumberPatterns.iddPattern, ip)
+                    let matches = try regexManager?.matchedStringByRegex(prefixPattern, string: rawNumber)
+                    if let m = matches?.first {
+                        let startCallingCode = m.count
+                        let index = rawNumber.index(rawNumber.startIndex, offsetBy: startCallingCode)
+                        processedNumber = String(rawNumber[index...])
+                        prefixBeforeNationalNumber = String(rawNumber[..<index])
+                    }
                 }
             }
         }
@@ -213,10 +220,17 @@ public final class PartialFormatter {
         else {
             do {
                 if let nationalPrefix = currentMetadata?.nationalPrefixForParsing {
-                    let nationalPrefixPattern = String(format: PhoneNumberPatterns.nationalPrefixParsingPattern, arguments: [nationalPrefix])
-                    let matches = try regexManager?.matchedStringByRegex(nationalPrefixPattern, string: rawNumber)
-                    if let m = matches?.first {
-                        startOfNationalNumber = m.count
+                    try nationalPrefix.withCString {
+#if os(Linux)
+                        let np = $0
+#else
+                        let np = String(cString: $0)
+#endif
+                        let nationalPrefixPattern = String(format: PhoneNumberPatterns.nationalPrefixParsingPattern, np)
+                        let matches = try regexManager?.matchedStringByRegex(nationalPrefixPattern, string: rawNumber)
+                        if let m = matches?.first {
+                            startOfNationalNumber = m.count
+                        }
                     }
                 }
             }
@@ -283,11 +297,23 @@ public final class PartialFormatter {
         return nil
     }
 
+#if os(Linux)
+    private func formatString(_ pattern: String, arg1: String) -> String {
+        return arg1.withCString {
+            return String(format: pattern, String(cString: $0))
+        }
+    }
+#else
+    private func formatString(_ pattern: String, arg1: String) -> String {
+        return String(format: pattern, arg1)
+    }
+#endif
+
     func applyFormat(_ rawNumber: String, formats: [MetadataPhoneNumberFormat]) -> String? {
         guard let regexManager = regexManager else { return nil }
         for format in formats {
             if let pattern = format.pattern, let formatTemplate = format.format {
-                let patternRegExp = String(format: PhoneNumberPatterns.formatPattern, arguments: [pattern])
+                let patternRegExp = formatString(PhoneNumberPatterns.formatPattern, arg1: pattern) // String(format: PhoneNumberPatterns.formatPattern, arguments: [pattern])
                 do {
                     let matches = try regexManager.regexMatches(patternRegExp, string: rawNumber)
                     if matches.count > 0 {

@@ -198,7 +198,6 @@ class PartialFormatterTests: XCTestCase {
         XCTAssertEqual(partialFormatter.formatPartial(testNumber), "+39 0549 55555")
         testNumber = "+390549555555"
         XCTAssertEqual(partialFormatter.formatPartial(testNumber), "+39 0549 555555")
-
     }
     
     func testFrenchNumberLocal()  {
