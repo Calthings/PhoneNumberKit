@@ -62,15 +62,20 @@ final class MetadataManager {
                 let metadataDict = jsonObjects["phoneNumberMetadata"] as? [String: Any],
                 let metadataTerritories = metadataDict["territories"] as? [String: Any] ,
                 let metadataTerritoryArray = metadataTerritories["territory"] as? NSArray {
+                    print("Have metadataTerritoryArray")
                     metadataTerritoryArray.forEach({
                         if let territoryDict = $0 as? [String: Any] {
                             let parsedTerritory = MetadataTerritory(jsondDict: territoryDict)
                             territoryArray.append(parsedTerritory)
                         }
                     })
+            } else {
+                print("No metadataTerritoryArray")
             }
         }
-        catch {}
+        catch let e {
+            print("Error loading Territories: \(e)")
+        }
         return territoryArray
     }
 
