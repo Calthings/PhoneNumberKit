@@ -19,8 +19,8 @@ final class MetadataManager {
     /**
      Private init populates metadata territories and the two hashed dictionaries for faster lookup.
      */
-    public init (JSONDataCallback: JSONDataCallback? = nil) {
-        territories = populateTerritories(getJSONData: JSONDataCallback)
+    public init (JSONCallback: JSONCallback? = nil) {
+        territories = populateTerritories(getJSON: JSONCallback)
         for item in territories {
             var currentTerritories: [MetadataTerritory] = territoriesByCode[item.countryCode] ?? [MetadataTerritory]()
             currentTerritories.append(item)
@@ -41,27 +41,29 @@ final class MetadataManager {
     /// Populates the metadata from the included json file resource.
     ///
     /// - returns: array of MetadataTerritory objects
-    fileprivate func populateTerritories(getJSONData: JSONDataCallback? = nil) -> [MetadataTerritory] {
+    fileprivate func populateTerritories(getJSON: JSONCallback? = nil) -> [MetadataTerritory] {
         var territoryArray = [MetadataTerritory]()
 
         do {
             var jsonData: Data?
-            if let getJSONData = getJSONData, let data = getJSONData() {
-                jsonData = data
-            } else {
+            var jsonObjects: [String: Any]?
+            
+            if let getJSON = getJSON {
+                jsonObjects = getJSON()
+           } else {
                 let frameworkBundle = Bundle(for: PhoneNumberKit.self)
 
                 if let jsonPath = frameworkBundle.path(forResource: "PhoneNumberMetadata", ofType: "json"),
-                let data = try? Data(contentsOf: URL(fileURLWithPath: jsonPath)) {
+                    let data = try? Data(contentsOf: URL(fileURLWithPath: jsonPath)) {
                     jsonData = data
+                    jsonObjects = try JSONSerialization.jsonObject(with: jsonData!, options: JSONSerialization.ReadingOptions.allowFragments) as? [String: Any]
                 }
             }
 
-            if let jsonData = jsonData,
-                let jsonObjects = try JSONSerialization.jsonObject(with: jsonData, options: JSONSerialization.ReadingOptions.allowFragments) as? [String: Any],
-                let metadataDict = jsonObjects["phoneNumberMetadata"] as? [String: Any],
-                let metadataTerritories = metadataDict["territories"] as? [String: Any] ,
-                let metadataTerritoryArray = metadataTerritories["territory"] as? NSArray {
+            if let jsonObjects = jsonObjects,
+               let metadataDict = jsonObjects["phoneNumberMetadata"] as? [String: Any],
+               let metadataTerritories = metadataDict["territories"] as? [String: Any] ,
+               let metadataTerritoryArray = metadataTerritories["territory"] as? NSArray {
                     print("Have metadataTerritoryArray")
                     metadataTerritoryArray.forEach({
                         if let territoryDict = $0 as? [String: Any] {
