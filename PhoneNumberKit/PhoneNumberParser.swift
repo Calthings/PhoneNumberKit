@@ -284,7 +284,7 @@ final class PhoneNumberParser {
                 #else
                     let pnp = String(cString: $0)
                 #endif
-                let prefixPattern = String(format: "^(?:%@)", pnp)
+                let prefixPattern = String(format: PhoneNumberPatterns.nationalPrefixParsingPattern, pnp)
                 let matches = try regex.regexMatches(prefixPattern, string: number)
                 if let firstMatch = matches.first {
                     let nationalNumberRule = metadata.generalDesc?.nationalNumberPattern

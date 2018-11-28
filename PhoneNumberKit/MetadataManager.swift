@@ -67,10 +67,11 @@ final class MetadataManager {
             if let getJSON = getJSON {
                 jsonObjects = getJSON()
            } else {
-                let frameworkBundle = Bundle(for: PhoneNumberKit.self)
+//                let frameworkBundle = Bundle(for: PhoneNumberKit.self)
 
-                if let jsonPath = frameworkBundle.path(forResource: "PhoneNumberMetadata", ofType: "json"),
-                    let data = try? Data(contentsOf: URL(fileURLWithPath: jsonPath)) {
+//                if let jsonPath = frameworkBundle.path(forResource: "PhoneNumberMetadata", ofType: "json"),
+//                    let data = try? Data(contentsOf: URL(fileURLWithPath: jsonPath)) {
+                if let data = phoneNumberMetadata {
                     jsonData = data
                     jsonObjects = try JSONSerialization.jsonObject(with: jsonData!, options: JSONSerialization.ReadingOptions.allowFragments) as? [String: Any]
                 }
