@@ -139,15 +139,25 @@ struct PhoneNumberPatterns {
 
   static let extnPattern = "(?:;ext=([0-9０-９٠-٩۰-۹]{1,7})|[  \\t,]*(?:e?xt(?:ensi(?:ó?|ó))?n?|ｅ?ｘｔｎ?|[,xｘX#＃~～;]|int|anexo|ｉｎｔ)[:\\.．]?[  \\t,-]*([0-9０-９٠-٩۰-۹]{1,7})#?|[- ]+([0-9０-９٠-٩۰-۹]{1,5})#)$"
 
+#if os(Linux)
+  static let iddPattern = "^(?:\\+|%d)"
+
+  static let formatPattern = "^(?:%d)$"
+#else
   static let iddPattern = "^(?:\\+|%@)"
 
   static let formatPattern = "^(?:%@)$"
+#endif
 
   static let characterClassPattern = "\\[([^\\[\\]])*\\]"
 
   static let standaloneDigitPattern = "\\d(?=[^,}][^,}])"
 
+#if os(Linux)
+  static let nationalPrefixParsingPattern = "^(?:%d)"
+#else
   static let nationalPrefixParsingPattern = "^(?:%@)"
+#endif
 
   static let prefixSeparatorPattern = "[- ]"
 
